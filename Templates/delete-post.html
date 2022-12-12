@@ -1,0 +1,315 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html class="no-js" lang="">
+
+<head>
+    <!-- Meta Data -->
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Delete Post | {{post.question}}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <!-- Favicon -->
+    <link rel="shortcut icon" type="image/x-icon" href="{% static 'media/favicon.png' %}">
+    <link rel="stylesheet" href="{% static 'dependencies/bootstrap/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'dependencies/icofont/icofont.min.css' %}">
+    <link rel="stylesheet" href="{% static 'dependencies/slick-carousel/css/slick.css' %}">
+    <link rel="stylesheet" href="{% static 'dependencies/slick-carousel/css/slick-theme.css' %}">
+    <link rel="stylesheet" href="{% static 'dependencies/magnific-popup/css/magnific-popup.css' %}">
+    <link rel="stylesheet" href="{% static 'dependencies/sal.js/sal.css' %}">
+    <link rel="stylesheet" href="{% static 'dependencies/mcustomscrollbar/jquery.mCustomScrollbar.min.css' %}">
+    <link rel="stylesheet" href="{% static 'dependencies/select2/css/select2.min.css' %}">
+
+    <!-- Site Stylesheet -->
+    <link rel="stylesheet" href="{% static 'assets/css/app.css' %}">
+    <!-- Google Web Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,300;0,400;0,600;0,700;0,800;0,900;1,400&display=swap" rel="stylesheet">
+</head>
+
+<body class="bg-link-water">
+    <!--[if lte IE 9]>
+    <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience and security.</p>
+    <![endif]-->
+    <a href="#wrapper" data-type="section-switch" class="scrollup">
+        <i class="icofont-bubble-up"></i>
+    </a>
+    <!-- Preloader Start Here -->
+    <div id="preloader"></div>
+    <!-- Preloader End Here -->
+    <div id="wrapper" class="wrapper">
+
+        <!-- Top Header -->
+        <header class="fixed-header">
+            <div class="header-menu">
+                <div class="navbar">
+                    <div class="nav-item d-none d-sm-block">
+                        <div class="header">
+                            <a href="/"><img src="{% static 'media/logo.png' %}" alt="UnBiasedMe"></a>
+                        </div>
+                    </div>
+
+                    <!--- Nav Bar Links  --->
+                    <div class="nav-item nav-top-menu">
+                        <nav id="dropdown" class="template-main-menu">
+                            <ul class="menu-content">
+                                <li class="header-nav-item">
+                                    <a href="/" class="menu-link active">Home</a>
+                                </li>
+                                <li class="header-nav-item">
+                                    <a href="{% url 'posts' %}" class="menu-link">Answer A Question</a>
+                                </li>
+                                <li class="header-nav-item">
+                                    <a href="{% url 'add-post' %}" class="menu-link">Ask A Question</a>
+                                </li>
+                                <li class="header-nav-item">
+                                    <a href="{% url 'categories' %}" class="menu-link have-sub">Categories</a>
+                                    <ul class="sub-menu">
+                                        {% for category in category_navbar %}
+                                        <li>
+                                            <a href="{% url 'category' category.slug %}">{{category.name}}</a>
+                                        </li>
+                                        {% endfor %}
+                                    </ul>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+
+                    <!---  Nav Bar Right Search & Login  --->
+                    <div class="nav-item header-control">
+                        <div class="inline-item d-none d-md-block">
+                            <div class="input-group">
+                                <input type="text" class="form-control" placeholder="Search here.......">
+                                <div class="input-group-append">
+                                    <button class="submit-btn" type="button"><i class="icofont-search"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                        {% if user.is_authenticated %}
+                        <div class="inline-item">
+                            <div class="dropdown dropdown-admin">
+                                <button class="dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="false">
+                                    <span class="media">
+                                        <span class="item-img">
+                                            <img src="{% static 'media/figure/chat_5.jpg' %}" alt="{{user.username}}">
+                                        </span>
+                                        <span class="media-body">
+                                            <span class="item-title">{{user.username}}</span>
+                                        </span>
+                                    </span>
+                                </button>
+                                <div class="dropdown-menu dropdown-menu-right">
+                                    <ul class="admin-options">
+                                        <li><a href="{% url 'edit-profile' %}">Profile Settings</a></li>
+                                        <li><a href="{% url 'logout' %}">Log Out</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        {% else %}
+                        <div class="inline-item">
+                            <div class="dropdown dropdown-admin">
+                                <div class="header-action">
+                                    <ul>
+                                        <li class="login-btn">
+                                            <a href="{% url 'login' %}" class="item-btn"><i class="fas fa-user"></i>Login</a>
+                                        </li>
+                                        <li class="login-btn">
+                                            <a href="{% url 'register' %}" class="item-btn"><i class="fas fa-user"></i>Signup</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        
+        <!-- Page Content -->
+        <div class="page-content">
+
+            <!-------- Newsfeed  Area Start ------->
+
+            {% if user.is_authenticated %}
+                {% if user.id == post.author.id %}
+                <div class="container">
+                    <!-- Banner Area Start -->
+                    <div class="newsfeed-banner">
+                        <div class="media">
+                            <div class="item-icon">
+                                <i class="icofont-delete-alt"></i>
+                            </div>
+                            <div class="media-body">
+                                <h3 class="item-title">Are You Sure ?</h3>
+                                <p>Once The Post Is Deleted, You Can't Restore It Back !!!</p>
+                            </div>
+                        </div>
+                        <ul class="animation-img">
+                            <li data-sal="slide-down" data-sal-duration="800" data-sal-delay="400"><img src="{% static 'media/banner/shape_7.png' %}" alt="shape"></li>
+                            <li data-sal="slide-up" data-sal-duration="500"><img src="{% static 'media/banner/people_2.png' %}" alt="shape"></li>
+                        </ul>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-12">
+
+                            <div class="forum-topic-add">
+                                <div class="block-box">
+                                    <form method="post">
+                                        {% csrf_token %}
+                                        <h4><small>Selected Post :- </small><i>{{post.title}}</i></h4>
+                                        <div class="form-group">
+                                            <input type="submit" class="submit-btn" name="btn-add" value="Delete Post">
+                                            <a class="submit-btn" href="{% url 'posts' %}">Cancel</a>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+                {% else %}
+                <div class="container">
+                    <!-- Banner Area Start -->
+                    <div class="newsfeed-banner">
+                        <div class="media">
+                            <div class="item-icon">
+                                <i class="icofont-megaphone-alt"></i>
+                            </div>
+                            <div class="media-body">
+                                <h3 class="item-title">You Can't Delete This Post</h3>
+                                <p>You Can Only Delete The Posts That You Have Posted !!!</p>
+                            </div>
+                        </div>
+                        <ul class="animation-img">
+                            <li data-sal="slide-down" data-sal-duration="800" data-sal-delay="400"><img src="{% static 'media/banner/shape_7.png' %}" alt="shape"></li>
+                            <li data-sal="slide-up" data-sal-duration="500"><img src="{% static 'media/banner/people_2.png' %}" alt="shape"></li>
+                        </ul>
+                    </div>
+                </div>
+                {% endif %}
+            {% else %}
+            <div class="container">
+                <!-- Banner Area Start -->
+                <div class="newsfeed-banner">
+                    <div class="media">
+                        <div class="item-icon">
+                            <i class="icofont-megaphone-alt"></i>
+                        </div>
+                        <div class="media-body">
+                            <h3 class="item-title">Please Log In</h3>
+                            <p>In Order To Delete Any Post, You First Need To Login !</p>
+                        </div>
+                    </div>
+                    <ul class="animation-img">
+                        <li data-sal="slide-down" data-sal-duration="800" data-sal-delay="400"><img src="{% static 'media/banner/shape_7.png' %}" alt="shape"></li>
+                        <li data-sal="slide-up" data-sal-duration="500"><img src="{% static 'media/banner/people_2.png' %}" alt="shape"></li>
+                    </ul>
+                </div>
+            </div>
+            {% endif %}
+
+            <!--------- Footer Area Start --------->
+            <br><br><br><br><br><br><br><br>
+            <footer class="footer-wrap">
+                <ul class="footer-top-image">
+                    <li data-sal="slide-up" data-sal-duration="500" data-sal-delay="400"><img src="{% static 'media/figure/man_5.png' %}" alt="Man"></li>
+                    <li data-sal="slide-up" data-sal-duration="500" data-sal-delay="500"><img src="{% static 'media/figure/man_6.png' %}" alt="Man"></li>
+                    <li data-sal="slide-up" data-sal-duration="500" data-sal-delay="300"><img src="{% static 'media/figure/man_4.png' %}" alt="Man"></li>
+                    <li data-sal="slide-up" data-sal-duration="500" data-sal-delay="600"><img src="{% static 'media/figure/man_7.png' %}" alt="Man"></li>
+                    <li data-sal="slide-up" data-sal-duration="500" data-sal-delay="200"><img src="{% static 'media/figure/man_3.png' %}" alt="Man"></li>
+                    <li data-sal="slide-up" data-sal-duration="500" data-sal-delay="700"><img src="{% static 'media/figure/man_8.png' %}" alt="Man"></li>
+                    <li data-sal="slide-up" data-sal-duration="500" data-sal-delay="100"><img src="{% static 'media/figure/man_2.png' %}" alt="Man"></li>
+                    <li data-sal="slide-up" data-sal-duration="500" data-sal-delay="800"><img src="{% static 'media/figure/man_9.png' %}" alt="Man"></li>
+                    <li data-sal="slide-up" data-sal-duration="500"><img src="{% static 'media/figure/man_1.png' %}" alt="Man"></li>
+                </ul>
+                <div class="main-footer">
+                    <div class="container">
+                        <div class="row row-cols-lg-4 row-cols-sm-2 row-cols-1">
+                            <div class="col">
+                                <div class="footer-box">
+                                    <div class="footer-logo">
+                                        <a href="/"><img src="{% static 'media/logo_dark.png' %}" alt="UnBiasedMe"></a>
+                                    </div>
+                                    <p>Dorem ipsum dolor sit amet consec adipisicing elit sed do eiusmod por incidiut labore et loreLorem ipsum kelly amieo dolorey.</p>
+                                </div>
+                            </div>
+                            <div class="col d-flex justify-content-lg-center">
+                                <div class="footer-box">
+                                    <h3 class="footer-title">
+                                        Important Links
+                                    </h3>
+                                    <div class="footer-link">
+                                        <ul>
+                                            <li><a href="/">Home</a></li>
+                                            <li><a href="{% url 'posts' %}">Answer A Question</a></li>
+                                            <li><a href="{% url 'add-post' %}">Ask A Question</a></li>
+                                            <li><a href="{% url 'categories' %}">See All Categories</a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col d-flex justify-content-lg-center">
+                                <div class="footer-box">
+                                    <h3 class="footer-title">
+                                        Some Categories
+                                    </h3>
+                                    <div class="footer-link">
+                                        <ul>
+                                            {% for category in category_footer %}
+                                            <li><a href="{% url 'category' category.slug %}">{{category.name}}</a></li>
+                                            {% endfor %}
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col d-flex justify-content-lg-center">
+                                <div class="footer-box">
+                                    <h3 class="footer-title">
+                                        Follow Us On
+                                    </h3>
+                                    <div class="footer-link">
+                                        <ul>
+                                            <li><a href="//www.facebook.com">Facebook</a></li>
+                                            <li><a href="//twitter.com">Twitter</a></li>
+                                            <li><a href="//www.instagram.com">Instagram</a></li>
+                                            <li><a href="//www.youtube.com">Youtube</a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="footer-bottom">
+                    <p>Copyright &copy;<script>document.write(new Date().getFullYear());</script> All rights reserved | Made With <svg viewBox="0 0 1792 1792" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" style="height: 0.8rem;"><path d="M896 1664q-26 0-44-18l-624-602q-10-8-27.5-26T145 952.5 77 855 23.5 734 0 596q0-220 127-344t351-124q62 0 126.5 21.5t120 58T820 276t76 68q36-36 76-68t95.5-68.5 120-58T1314 128q224 0 351 124t127 344q0 221-229 450l-623 600q-18 18-44 18z" fill="#e25555"></path></svg> by <a href="https://devdesignz.com" style="color:rgb(191, 106, 224);" >DevDesignZ</a></p>
+                </div>
+            </footer>
+
+
+        </div>
+
+    </div>
+    <!-- Jquery Js -->
+    <script src="{% static 'dependencies/jquery/js/jquery.min.js' %}"></script>
+    <script src="{% static 'dependencies/popper.js/js/popper.min.js' %}"></script>
+    <script src="{% static 'dependencies/bootstrap/js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'dependencies/imagesloaded/js/imagesloaded.pkgd.min.js' %}"></script>
+    <script src="{% static 'dependencies/isotope-layout/js/isotope.pkgd.min.js' %}"></script>
+    <script src="{% static 'dependencies/slick-carousel/js/slick.min.js' %}"></script>
+    <script src="{% static 'dependencies/sal.js/sal.js' %}"></script>
+    <script src="{% static 'dependencies/magnific-popup/js/jquery.magnific-popup.min.js' %}"></script>
+    <script src="{% static 'dependencies/mcustomscrollbar/jquery.mCustomScrollbar.concat.min.js' %}"></script>
+    <script src="{% static 'dependencies/select2/js/select2.min.js' %}"></script>
+    <script src="{% static 'dependencies/elevate-zoom/jquery.elevatezoom.js' %}"></script>
+    <script src="{% static 'dependencies/bootstrap-validator/js/validator.min.js' %}"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBtmXSwv4YmAKtcZyyad9W7D4AC08z0Rb4"></script>
+
+    <!-- Site Scripts -->
+    <script src="{% static 'assets/js/app.js' %}"></script>
+</body>
+
+</html>
